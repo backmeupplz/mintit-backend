@@ -3434,6 +3434,7 @@ __metadata:
     koa: ^2.14.1
     koa-bodyparser: ^4.3.0
     koa-router: ^12.0.0
+    mintit-contract: ^0.0.2
     module-alias: ^2.2.2
     prettier: ^2.8.1
     tsc-watch: ^6.0.0
@@ -3441,6 +3442,13 @@ __metadata:
     ultimate-text-to-image: ^1.0.1
   languageName: unknown
   linkType: soft
+
+"mintit-contract@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "mintit-contract@npm:0.0.2"
+  checksum: f48ad38958ce1d2a7b978188daa501cd0282b8f4e6e28bb27d31f161ee26f70a29b2e31672491622b525ceef53baef329a4bb2baa733605231ec8ec95dcc8690
+  languageName: node
+  linkType: hard
 
 "mkdirp@npm:^1.0.3, mkdirp@npm:^1.0.4":
   version: 1.0.4
