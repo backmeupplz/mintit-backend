@@ -30,7 +30,7 @@ export default class RootController {
       description: `@${cast.author.username || cast.author.fid}:\n${cast.text}`,
       external_url: 'https://farcaster.xyz',
       image: `https://mintit.boats/image/${tokenId}`,
-      name: `Cast ${tokenId}`,
+      name: `Cast ${BigNumber.from(tokenId).toHexString()}`,
     }
   }
 
