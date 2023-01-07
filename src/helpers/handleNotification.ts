@@ -2,6 +2,7 @@ import { Notification } from '@big-whale-labs/botcaster'
 import { SeenCastModel } from '../models/SeenCast'
 import castsContract from './castsContract'
 import merkleClient from './merkleClient'
+import provider from './provider'
 import publishCast from './publishCast'
 
 export default async function (notification: Notification) {
@@ -70,7 +71,9 @@ export default async function (notification: Notification) {
       return
     }
     const tx = await (
-      await castsContract.mint(notification.content.cast.parentHash, address)
+      await castsContract.mint(notification.content.cast.parentHash, address, {
+        gasPrice: await provider.getGasPrice(),
+      })
     ).wait()
     await publishCast(
       `🚀 The cast is being minted as an NFT! You can check the transaction here: https://mumbai.polygonscan.com/tx/${tx.transactionHash}`,
