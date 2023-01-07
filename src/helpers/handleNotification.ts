@@ -31,15 +31,16 @@ export default async function (notification: Notification) {
     if (dbCast) {
       return
     }
+    await SeenCastModel.create({
+      hash: notification.content.cast.hash,
+    })
     // Check if it is a reply
     if (!notification.content.cast?.parentHash) {
       await publishCast(
         '👋 Thank you for the mention!\n\nTo mint any cast as an NFT, reply to it with the word "@mintit" 🚀',
         notification.content.cast.hash
       )
-      return SeenCastModel.create({
-        hash: notification.content.cast.hash,
-      })
+      return
     }
     // Check if we already minted this cast
     let owner: string | undefined
@@ -53,9 +54,7 @@ export default async function (notification: Notification) {
         `😅 So sorry, this cast is already owned by ${owner}!`,
         notification.content.cast.hash
       )
-      return SeenCastModel.create({
-        hash: notification.content.cast.hash,
-      })
+      return
     }
     // Mint the cast
     const verifications = await merkleClient.fetchUserVerifications(
@@ -69,9 +68,7 @@ export default async function (notification: Notification) {
         `🤔 I couldn't fetch the address connected to your Farcaster account, sorry!`,
         notification.content.cast.hash
       )
-      return SeenCastModel.create({
-        hash: notification.content.cast.hash,
-      })
+      return
     }
     const tx = await mintCast(notification.content.cast.parentHash, address)
     if (!tx) {
@@ -79,9 +76,7 @@ export default async function (notification: Notification) {
         '🤔 I could not mint this cast, sorry! Is it already minted by somebody else?',
         notification.content.cast.hash
       )
-      return SeenCastModel.create({
-        hash: notification.content.cast.hash,
-      })
+      return
     }
     return publishCast(
       `🚀 The cast has been minted as an NFT! You can check the transaction here: https://polygonscan.com/tx/${tx.transactionHash}`,
