@@ -10,10 +10,6 @@ import textToImage from '../helpers/textToImage'
 export default class RootController {
   @Get('/metadata/:tokenId')
   async metadata(@Params() { tokenId }: TokenId, @Ctx() ctx: Context) {
-    const cast = await merkleClient.fetchCast(tokenId)
-    if (!cast) {
-      return ctx.throw(notFound('Cast not found'))
-    }
     try {
       const owner = await castsContract.ownerOf(tokenId)
       if (!owner) {
@@ -22,6 +18,10 @@ export default class RootController {
     } catch (error) {
       console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
+    }
+    const cast = await merkleClient.fetchCast(tokenId)
+    if (!cast) {
+      return ctx.throw(notFound('Cast not found'))
     }
     return {
       description: `@${cast.author.username || cast.author.fid}:\n${cast.text}`,
@@ -33,10 +33,6 @@ export default class RootController {
 
   @Get('/image/:tokenId')
   async image(@Params() { tokenId }: TokenId, @Ctx() ctx: Context) {
-    const cast = await merkleClient.fetchCast(tokenId)
-    if (!cast) {
-      return ctx.throw(notFound('Cast not found'))
-    }
     try {
       const owner = await castsContract.ownerOf(tokenId)
       if (!owner) {
@@ -45,6 +41,10 @@ export default class RootController {
     } catch (error) {
       console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
+    }
+    const cast = await merkleClient.fetchCast(tokenId)
+    if (!cast) {
+      return ctx.throw(notFound('Cast not found'))
     }
     return textToImage(cast.text, cast.author.username || cast.author.fid)
   }
