@@ -76,7 +76,7 @@ export default async function (notification: Notification) {
       })
     ).wait()
     await publishCast(
-      `🚀 The cast is being minted as an NFT! You can check the transaction here: https://mumbai.polygonscan.com/tx/${tx.transactionHash}`,
+      `🚀 The cast has been minted as an NFT! You can check the transaction here: https://polygonscan.com/tx/${tx.transactionHash}`,
       notification.content.cast.hash
     )
   } catch (error) {
