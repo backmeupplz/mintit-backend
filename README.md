@@ -2,6 +2,7 @@
 
 - Listens to the @mintit mentions and mints cast tokens
 - Returns metadata and images for tokens
+- Find the contract code [here](https://github.com/backmeupplz/mintit-contract)
 
 ## Installation and local launch
 
