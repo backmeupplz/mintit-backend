@@ -2,7 +2,7 @@ import { Notification } from '@big-whale-labs/botcaster'
 import { SeenCastModel } from '../models/SeenCast'
 import castsContract from './castsContract'
 import merkleClient from './merkleClient'
-import provider from './provider'
+import mintCast from './mintCast'
 import publishCast from './publishCast'
 
 export default async function (notification: Notification) {
@@ -31,16 +31,15 @@ export default async function (notification: Notification) {
     if (dbCast) {
       return
     }
-    await SeenCastModel.create({
-      hash: notification.content.cast.hash,
-    })
     // Check if it is a reply
     if (!notification.content.cast?.parentHash) {
       await publishCast(
         '👋 Thank you for the mention!\n\nTo mint any cast as an NFT, reply to it with the word "@mintit" 🚀',
         notification.content.cast.hash
       )
-      return
+      return SeenCastModel.create({
+        hash: notification.content.cast.hash,
+      })
     }
     // Check if we already minted this cast
     let owner: string | undefined
@@ -54,7 +53,9 @@ export default async function (notification: Notification) {
         `😅 So sorry, this cast is already owned by ${owner}!`,
         notification.content.cast.hash
       )
-      return
+      return SeenCastModel.create({
+        hash: notification.content.cast.hash,
+      })
     }
     // Mint the cast
     const verifications = await merkleClient.fetchUserVerifications(
@@ -68,14 +69,21 @@ export default async function (notification: Notification) {
         `🤔 I couldn't fetch the address connected to your Farcaster account, sorry!`,
         notification.content.cast.hash
       )
-      return
-    }
-    const tx = await (
-      await castsContract.mint(notification.content.cast.parentHash, address, {
-        gasPrice: await provider.getGasPrice(),
+      return SeenCastModel.create({
+        hash: notification.content.cast.hash,
       })
-    ).wait()
-    await publishCast(
+    }
+    const tx = await mintCast(notification.content.cast.parentHash, address)
+    if (!tx) {
+      await publishCast(
+        '🤔 I could not mint this cast, sorry! Is it already minted by somebody else?',
+        notification.content.cast.hash
+      )
+      return SeenCastModel.create({
+        hash: notification.content.cast.hash,
+      })
+    }
+    return publishCast(
       `🚀 The cast has been minted as an NFT! You can check the transaction here: https://polygonscan.com/tx/${tx.transactionHash}`,
       notification.content.cast.hash
     )
