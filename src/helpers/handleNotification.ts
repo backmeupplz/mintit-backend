@@ -11,6 +11,10 @@ export default async function (notification: Notification) {
     if (notification.type !== 'cast-mention') {
       return
     }
+    // Check if it's a self-notification
+    if (notification.actor?.username?.toLowerCase() === 'mintit') {
+      return
+    }
     // Check if it has text
     const mentionText = notification.content.cast?.text
     if (!mentionText) {
