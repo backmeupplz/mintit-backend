@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import { Context } from 'koa'
 import { Controller, Ctx, Get, Params } from 'amala'
 import { notFound } from '@hapi/boom'
@@ -19,7 +20,9 @@ export default class RootController {
       console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
     }
-    const cast = await merkleClient.fetchCast(tokenId)
+    const cast = await merkleClient.fetchCast(
+      BigNumber.from(tokenId).toHexString()
+    )
     if (!cast) {
       return ctx.throw(notFound('Cast not found'))
     }
@@ -42,7 +45,9 @@ export default class RootController {
       console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
     }
-    const cast = await merkleClient.fetchCast(tokenId)
+    const cast = await merkleClient.fetchCast(
+      BigNumber.from(tokenId).toHexString()
+    )
     if (!cast) {
       return ctx.throw(notFound('Cast not found'))
     }
