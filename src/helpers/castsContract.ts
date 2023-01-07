@@ -1,5 +1,5 @@
 import { Casts__factory } from 'mintit-contract'
-import env from '@/helpers/env'
-import provider from '@/helpers/provider'
+import env from './env'
+import wallet from './wallet'
 
-export default Casts__factory.connect(env.CONTRACT_ADDRESS, provider)
+export default Casts__factory.connect(env.CONTRACT_ADDRESS, wallet)

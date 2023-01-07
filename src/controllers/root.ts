@@ -1,10 +1,10 @@
 import { Context } from 'koa'
 import { Controller, Ctx, Get, Params } from 'amala'
 import { notFound } from '@hapi/boom'
-import TokenId from '@/validators/TokenId'
-import castsContract from '@/helpers/castsContract'
-import merkleClient from '@/helpers/merkleClient'
-import textToImage from '@/helpers/textToImage'
+import TokenId from '../validators/TokenId'
+import castsContract from '../helpers/castsContract'
+import merkleClient from '../helpers/merkleClient'
+import textToImage from '../helpers/textToImage'
 
 @Controller('/')
 export default class RootController {
@@ -14,8 +14,13 @@ export default class RootController {
     if (!cast) {
       return ctx.throw(notFound('Cast not found'))
     }
-    const owner = await castsContract.ownerOf(tokenId)
-    if (!owner) {
+    try {
+      const owner = await castsContract.ownerOf(tokenId)
+      if (!owner) {
+        throw new Error()
+      }
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
     }
     return {
@@ -32,8 +37,13 @@ export default class RootController {
     if (!cast) {
       return ctx.throw(notFound('Cast not found'))
     }
-    const owner = await castsContract.ownerOf(tokenId)
-    if (!owner) {
+    try {
+      const owner = await castsContract.ownerOf(tokenId)
+      if (!owner) {
+        throw new Error()
+      }
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
     }
     return textToImage(cast.text, cast.author.username || cast.author.fid)
