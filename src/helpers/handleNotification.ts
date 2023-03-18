@@ -35,6 +35,12 @@ export default async function (notification: Notification) {
     if (dbCast) {
       return
     }
+    if (
+      (notification.content?.cast?.timestamp || 0) <
+      Date.now() - 1000 * 60 * 60 * 24
+    ) {
+      return
+    }
     await SeenCastModel.create({
       hash: notification.content.cast.hash,
     })
