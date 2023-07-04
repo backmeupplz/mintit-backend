@@ -18,7 +18,7 @@
     "@big-whale-labs/botcaster": "^0.0.17",
     "@hapi/boom": "^10.0.0",
     "@koa/cors": "^4.0.0",
-    "@standard-crypto/farcaster-js": "^5.5.2",
+    "@standard-crypto/farcaster-js": "^5.6.0",
     "@typegoose/typegoose": "^10.0.0",
     "@types/uuid": "^9.0.0",
     "amala": "^8.0.2",
