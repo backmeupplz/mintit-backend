@@ -89,7 +89,7 @@ export default async function (notification: Notification) {
       return
     }
     return publishCast(
-      `🚀 The cast has been minted as an NFT! You can check the transaction here: https://polygonscan.com/tx/${tx.transactionHash}`,
+      `🚀 The cast has been minted as an NFT! You can check the transaction here: https://explorer.zora.energy/tx/${tx.transactionHash}`,
       notification.content.cast.hash
     )
   } catch (error) {
