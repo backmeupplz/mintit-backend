@@ -1,4 +1,12 @@
 providers = ['...', 'python']
 
+[build]
+# Custom build step to install system dependencies required by `canvas`
+# This step assumes the use of Nix package manager commands to install these dependencies
+# You might need to adjust the package names based on the Nix packages available
+cmd = """
+nix-env -iA nixpkgs.cairo nixpkgs.pango nixpkgs.libjpeg nixpkgs.librsvg nixpkgs.giflib nixpkgs.pixman
+"""
+
 [start]
 cmd = "yarn distribute"
