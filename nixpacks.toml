@@ -1,2 +1,5 @@
+[phases.setup]
+nixPkgs = [..., "python"]
+
 [start]
 cmd = "yarn distribute"
