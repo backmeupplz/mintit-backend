@@ -1,4 +1,8 @@
 providers = ['...', 'python']
 
+[build]
+# Specify build packages (Nix equivalents of Debian packages)
+packages = ["pixman", "cairo", "pango", "libjpeg-turbo", "giflib"]
+
 [start]
 cmd = "yarn distribute"
