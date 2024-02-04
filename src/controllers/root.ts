@@ -4,7 +4,7 @@ import { Controller, Ctx, Get, Params } from 'amala'
 import { notFound } from '@hapi/boom'
 import TokenId from '../validators/TokenId'
 import castsContract from '../helpers/castsContract'
-import merkleClient from '../helpers/merkleClient'
+import neynar from '../helpers/neynar'
 import textToImage from '../helpers/textToImage'
 
 @Controller('/')
@@ -20,7 +20,7 @@ export default class RootController {
       console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
     }
-    const cast = await merkleClient.fetchCast(
+    const cast = await neynar.v2.fetchCast(
       BigNumber.from(tokenId).toHexString()
     )
     if (!cast) {
@@ -45,7 +45,7 @@ export default class RootController {
       console.error(error instanceof Error ? error.message : error)
       return ctx.throw(notFound("Cast isn't minted yet"))
     }
-    const cast = await merkleClient.fetchCast(
+    const cast = await neynar.v2.fetchCast(
       BigNumber.from(tokenId).toHexString()
     )
     if (!cast) {

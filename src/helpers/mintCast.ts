@@ -1,7 +1,6 @@
 import { ContractReceipt } from 'ethers'
 import { v4 as uuidv4 } from 'uuid'
 import castsContract from './castsContract'
-import provider from './provider'
 
 const callbacks = {} as {
   [uuid: string]: (
@@ -36,9 +35,7 @@ setInterval(async () => {
       return
     }
     const tx = await (
-      await castsContract.mint(nextJob.parentHash, nextJob.address, {
-        gasPrice: await provider.getGasPrice(),
-      })
+      await castsContract.mint(nextJob.parentHash, nextJob.address)
     ).wait()
     callbacks[nextJob.uuid]?.(tx)
     delete callbacks[nextJob.uuid]

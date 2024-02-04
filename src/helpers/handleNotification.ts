@@ -1,103 +1,97 @@
-import { Notification } from '@big-whale-labs/botcaster'
+import { CastWithInteractions } from '../../node_modules/@standard-crypto/farcaster-js-neynar/dist/commonjs/v1/openapi/generated/models/cast-with-interactions'
 import { SeenCastModel } from '../models/SeenCast'
 import castsContract from './castsContract'
-import merkleClient from './merkleClient'
+import dateStringToTimestamp from './dateStringToTimestamp'
 import mintCast from './mintCast'
 import publishCast from './publishCast'
 
-export default async function (notification: Notification) {
+export default async function (notification: CastWithInteractions) {
   try {
     // Check if mention
     if (notification.type !== 'cast-mention') {
       return
     }
+    if (!('username' in notification.author)) {
+      return
+    }
     // Check if it's a self-notification
-    if (notification.actor?.username?.toLowerCase() === 'mintit') {
+    if (notification.author.username.toLowerCase() === 'mintit') {
       return
     }
     // Check if it has text
-    const mentionText = notification.content.cast?.text
+    const mentionText = notification.text
     if (!mentionText) {
       return
     }
     // Check if it has a hash
-    if (!notification.content.cast?.hash) {
-      return
-    }
-    // Check if there is an actor
-    if (!notification.actor) {
+    if (!notification.hash) {
       return
     }
     // Check if we've seen this notification
     const dbCast = await SeenCastModel.findOne({
-      hash: notification.content.cast.hash,
+      hash: notification.hash,
     })
     if (dbCast) {
       return
     }
     if (
-      (notification.content?.cast?.timestamp || 0) <
-      Date.now() - 1000 * 60 * 60 * 24
+      dateStringToTimestamp(notification.timestamp) <
+      Date.now() - 1000 * 60 * 15
     ) {
       return
     }
     await SeenCastModel.create({
-      hash: notification.content.cast.hash,
+      hash: notification.hash,
     })
     // Check if it is a reply
-    if (!notification.content.cast?.parentHash) {
+    if (!notification.parentHash) {
       await publishCast(
         '👋 Thank you for the mention!\n\nTo mint any cast as an NFT, reply to it with the word "@mintit" 🚀',
-        notification.content.cast.hash
+        notification.hash
       )
       return
     }
     // Check if we already minted this cast
     let owner: string | undefined
     try {
-      owner = await castsContract.ownerOf(notification.content.cast.parentHash)
+      owner = await castsContract.ownerOf(notification.parentHash)
     } catch (error) {
       // do nothing
     }
     if (owner) {
       await publishCast(
         `😅 So sorry, this cast is already owned by ${owner}!`,
-        notification.content.cast.hash
+        notification.hash
       )
       return
     }
     // Mint the cast
-    const verifications = await merkleClient.fetchUserVerifications(
-      notification.actor as { fid: number }
-    )
-    const verification = await verifications.next()
-    const v = verification.value
-    const address = v?.address
+    const address = notification.author.verifications[0]
     if (!address) {
       await publishCast(
         `🤔 I couldn't fetch the address connected to your Farcaster account, sorry!`,
-        notification.content.cast.hash
+        notification.hash
       )
       return
     }
-    const tx = await mintCast(notification.content.cast.parentHash, address)
+    const tx = await mintCast(notification.parentHash, address)
     if (!tx) {
       await publishCast(
         '🤔 I could not mint this cast, sorry! Is it already minted by somebody else?',
-        notification.content.cast.hash
+        notification.hash
       )
       return
     }
     return publishCast(
       `🚀 The cast has been minted as an NFT! You can check the transaction here: https://explorer.zora.energy/tx/${tx.transactionHash}`,
-      notification.content.cast.hash
+      notification.hash
     )
   } catch (error) {
     console.log(error instanceof Error ? error.message : error)
-    if (notification.content.cast?.hash) {
+    if (notification.hash) {
       await publishCast(
         "@borodutch something went wrong here, I'm so sorry",
-        notification.content.cast.hash
+        notification.hash
       )
     }
   }

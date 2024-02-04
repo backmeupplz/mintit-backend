@@ -9,7 +9,10 @@ dotenv.config({ path: resolve(cwd(), '.env') })
 export default cleanEnv(process.env, {
   MONGO: str(),
   PORT: num({ default: 1337 }),
-  FARCASTER_MNEMONIC: str(),
+  NEYNAR_API_KEY: str(),
+  NEYNAR_UUID: str(),
   CONTRACT_ADDRESS: str(),
   ETH_RPC: str(),
+  MINTER_MNEMONIC: str(),
+  FID: num(),
 })
