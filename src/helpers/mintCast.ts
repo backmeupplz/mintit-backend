@@ -41,6 +41,7 @@ setInterval(async () => {
     delete callbacks[nextJob.uuid]
   } catch (error) {
     if (nextJob) {
+      console.error(error instanceof Error ? error.message : error)
       callbacks[nextJob.uuid]?.(undefined)
       delete callbacks[nextJob.uuid]
     }
