@@ -6,6 +6,7 @@ import mintCast from './mintCast'
 import publishCast from './publishCast'
 
 export default async function (notification: CastWithInteractions) {
+  console.log('got notification', notification)
   try {
     // Check if mention
     if (notification.type !== 'cast-mention') {
